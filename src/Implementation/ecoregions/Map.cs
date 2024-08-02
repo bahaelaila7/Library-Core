@@ -1,3 +1,4 @@
+using Landis_GeoTiff;
 using Landis.Core;
 using Landis.SpatialModeling;
 using System;
@@ -8,7 +9,6 @@ namespace Landis.Ecoregions
     {
         private string path;
         private IEcoregionDataset ecoregions;
-        private IRasterFactory rasterFactory;
         
 
         //---------------------------------------------------------------------
@@ -26,17 +26,15 @@ namespace Landis.Ecoregions
         /// The raster factory to use to read the map.
         /// </param>
         public Map(string         path,
-                   IEcoregionDataset       ecoregions,
-                   IRasterFactory rasterFactory)
+                   IEcoregionDataset       ecoregions)
         {
             this.path = path;
             this.ecoregions = ecoregions;
-            this.rasterFactory = rasterFactory;
             
             
             try
             {
-                IInputRaster<EcoregionPixel> map = rasterFactory.OpenRaster<EcoregionPixel>(path);
+                IInputRaster<int> map = RasterFactory.OpenRaster<int>(path);
                 using (map)
                 {
                     //this.metadata = map.Metadata;
@@ -64,7 +62,7 @@ namespace Landis.Ecoregions
         
         public IInputGrid<bool> OpenAsInputGrid()
         {
-            IInputRaster<EcoregionPixel> map = rasterFactory.OpenRaster<EcoregionPixel>(path);
+            IInputRaster<int> map = RasterFactory.OpenRaster<int>(path);
             return new InputGrid(map, ecoregions);
         }
         
@@ -76,15 +74,15 @@ namespace Landis.Ecoregions
         public ISiteVar<IEcoregion> CreateSiteVar(ILandscape landscape)
         {
             ISiteVar<IEcoregion> siteVar = landscape.NewSiteVar<IEcoregion>();
-            IInputRaster<EcoregionPixel> map = rasterFactory.OpenRaster<EcoregionPixel>(path);
+            IInputRaster<int> map = RasterFactory.OpenRaster<int>(path);
             Console.WriteLine("  reading in ecoregion from {0} ", path);
             using (map)
             {
-                EcoregionPixel pixel = map.BufferPixel;
+                int pixel = map.BufferPixel;
                 foreach (Site site in landscape.AllSites)
                 {
                     map.ReadBufferPixel();
-                    ushort mapCode = (ushort)pixel.MapCode.Value;
+                    ushort mapCode = (ushort)pixel;
                     if (site.IsActive)
                     {
                         siteVar[site] = ecoregions.Find(mapCode);

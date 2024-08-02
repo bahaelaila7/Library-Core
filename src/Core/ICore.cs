@@ -18,7 +18,6 @@ namespace Landis.Core
     /// Interface to the core framework for extensions.
     /// </summary>
     public interface ICore
-        : IRasterFactory
     {
         /// <summary>
         /// The user interface that the model writes information to.
