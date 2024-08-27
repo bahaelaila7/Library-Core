@@ -3,7 +3,7 @@ using Landis.Utilities;
 using Loader = Landis.Utilities.PlugIns.Loader;
 using log4net;
 using Landis.Core;
-using Landis_GeoTiff;
+using Landis.GeoTiff;
 
 using System;
 using System.IO;
@@ -97,7 +97,7 @@ namespace Landis
 
          //---------------------------------------------------------------------
 
-        IInputRaster<T> OpenRaster<T>(string path)
+        public IInputRaster<T> OpenRaster<T>(string path)
             where T : struct
         {
             return RasterFactory.OpenRaster<T>(path);
@@ -106,8 +106,8 @@ namespace Landis
         //---------------------------------------------------------------------
 
 
-        IOutputRaster<T> CreateRaster<T>(string         path,
-                                                                  Landis_GeoTiff.Dimensions dimensions)
+        public IOutputRaster<T> CreateRaster<T>(string         path,
+                                                                  Dimensions dimensions)
             where T : struct
         {
             try {
@@ -322,6 +322,7 @@ namespace Landis
 
 
             try {
+                var test = AssemblyInfo.GetLoadedAssemblies(null);
                 ui.WriteLine("Loading {0} extension ...", scenario.Succession.Info.Name);
                 succession = Loader.Load<SuccessionMain>(scenario.Succession.Info);
                 succession.LoadParameters(scenario.Succession.InitFile, this);

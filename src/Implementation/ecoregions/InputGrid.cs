@@ -1,4 +1,4 @@
-using Landis_GeoTiff;
+using Landis.GeoTiff;
 using Landis.Utilities;
 using Landis.SpatialModeling;
 using Landis.Core;
@@ -44,8 +44,8 @@ namespace Landis.Ecoregions
         {
             if (disposed)
                 throw new System.InvalidOperationException("Object has been disposed.");
-            int pixel = raster.BufferPixel;
             raster.ReadBufferPixel();
+            int pixel = raster.BufferPixel;
             pixelLocation = RowMajor.Next(pixelLocation, raster.Dimensions.Columns);
             ushort mapCode = (ushort) pixel;
             IEcoregion ecoregion = ecoregions.Find(mapCode);

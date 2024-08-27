@@ -4,6 +4,7 @@
 //   Robert Scheller, North Carolina State University
 //   James Domingo, Green Code LLC
 
+using Landis.GeoTiff;
 using Landis.SpatialModeling;
 using System.IO;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Landis.Core
     /// <summary>
     /// Interface to the core framework for extensions.
     /// </summary>
-    public interface ICore
+    public interface ICore : IRasterFactory
     {
         /// <summary>
         /// The user interface that the model writes information to.

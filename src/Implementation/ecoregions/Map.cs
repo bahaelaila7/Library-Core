@@ -1,4 +1,4 @@
-using Landis_GeoTiff;
+using Landis.GeoTiff;
 using Landis.Core;
 using Landis.SpatialModeling;
 using System;
@@ -78,10 +78,10 @@ namespace Landis.Ecoregions
             Console.WriteLine("  reading in ecoregion from {0} ", path);
             using (map)
             {
-                int pixel = map.BufferPixel;
                 foreach (Site site in landscape.AllSites)
                 {
                     map.ReadBufferPixel();
+                    int pixel = map.BufferPixel;
                     ushort mapCode = (ushort)pixel;
                     if (site.IsActive)
                     {
