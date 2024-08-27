@@ -3,7 +3,6 @@ using Landis.Utilities;
 using Loader = Landis.Utilities.PlugIns.Loader;
 using log4net;
 using Landis.Core;
-using Landis_GeoTiff;
 
 using System;
 using System.IO;
@@ -26,6 +25,7 @@ namespace Landis
         private SiteVarRegistry siteVarRegistry;
         private ISpeciesDataset species;
         private IEcoregionDataset ecoregions;
+        private IConfigurableRasterFactory rasterFactory;
         private ILandscapeFactory landscapeFactory;
         private ILandscape landscape;
         private string version;
@@ -82,6 +82,7 @@ namespace Landis
         /// Initializes a new instance.
         /// </summary>
         public Model(IExtensionDataset extensionDataset,
+                     IConfigurableRasterFactory rasterFactory,
                      ILandscapeFactory landscapeFactory,
                      string version)
 
@@ -89,32 +90,51 @@ namespace Landis
             this.extensionDataset = extensionDataset;
             siteVarRegistry = new SiteVarRegistry();
 
+            this.rasterFactory = rasterFactory;
             this.landscapeFactory = landscapeFactory;
-            this.version = version;         
+            this.version = version;
+
+            BindExtensionToFormat(".bin", "ENVI");
+            BindExtensionToFormat(".bmp", "BMP");
+            BindExtensionToFormat(".gis", "LAN");
+            BindExtensionToFormat(".img", "HFA");
+            BindExtensionToFormat(".tif", "GTiff");
+            BindExtensionToFormat(".ingr", "INGR");
+            BindExtensionToFormat(".vrt",  "VRT" );           
  
             ui = null;
         }
 
+        //---------------------------------------------------------------------
+
+        // Bind a file extension to a raster format if the format is supported
+        // by the raster factory.
+        private void BindExtensionToFormat(string fileExtension,
+                                           string formatCode)
+        {
+            RasterFormat rasterFormat = rasterFactory.GetFormat(formatCode);
+            if (rasterFormat != null)
+                rasterFactory.BindExtensionToFormat(fileExtension, rasterFormat);
+        }
+
          //---------------------------------------------------------------------
 
-        IInputRaster<T> OpenRaster<T>(string path)
-            where T : struct
+        IInputRaster<TPixel> IRasterFactory.OpenRaster<TPixel>(string path)
         {
-            return RasterFactory.OpenRaster<T>(path);
+            return rasterFactory.OpenRaster<TPixel>(path);
         }
 
         //---------------------------------------------------------------------
 
 
-        IOutputRaster<T> CreateRaster<T>(string         path,
-                                                                  Landis_GeoTiff.Dimensions dimensions)
-            where T : struct
+        IOutputRaster<TPixel> IRasterFactory.CreateRaster<TPixel>(string         path,
+                                                                  Dimensions dimensions)
         {
             try {
                 string dir = System.IO.Path.GetDirectoryName(path);
                 if (dir.Length > 0)
                     Landis.Utilities.Directory.EnsureExists(dir);
-                return RasterFactory.CreateRaster<T>(path, dimensions);
+                return rasterFactory.CreateRaster<TPixel>(path, dimensions);
             }
             catch (System.IO.IOException exc) {
                 string mesg = string.Format("Error opening map \"{0}\"", path);
@@ -300,7 +320,8 @@ namespace Landis
 
             ui.WriteLine("Initializing landscape from ecoregions map \"{0}\" ...", scenario.EcoregionsMap);
             Ecoregions.Map ecoregionsMap = new Ecoregions.Map(scenario.EcoregionsMap,
-                                                              ecoregions);
+                                                              ecoregions,
+                                                              rasterFactory);
             // -- ProcessMetadata(ecoregionsMap.Metadata, scenario);
             cellLength = scenario.CellLength.Value;
             cellArea = (float)((cellLength * cellLength) / 10000);

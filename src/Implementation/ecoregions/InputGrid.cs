@@ -1,4 +1,3 @@
-using Landis_GeoTiff;
 using Landis.Utilities;
 using Landis.SpatialModeling;
 using Landis.Core;
@@ -14,7 +13,7 @@ namespace Landis.Ecoregions
     public class InputGrid
         : Grid, IInputGrid<bool>
     {
-        private IInputRaster<int> raster;
+        private IInputRaster<EcoregionPixel> raster;
         private IEcoregionDataset ecoregions;
         private Location pixelLocation;
         private bool disposed = false;
@@ -25,7 +24,7 @@ namespace Landis.Ecoregions
         /// Initializes a new instance using an input raster with ecoregion
         /// pixels.
         /// </summary>
-        public InputGrid(IInputRaster<int> raster,
+        public InputGrid(IInputRaster<EcoregionPixel> raster,
                          IEcoregionDataset            ecoregions)
             : base(raster.Dimensions.Rows,
                    raster.Dimensions.Columns)
@@ -44,10 +43,10 @@ namespace Landis.Ecoregions
         {
             if (disposed)
                 throw new System.InvalidOperationException("Object has been disposed.");
-            int pixel = raster.BufferPixel;
+            EcoregionPixel pixel = raster.BufferPixel;
             raster.ReadBufferPixel();
             pixelLocation = RowMajor.Next(pixelLocation, raster.Dimensions.Columns);
-            ushort mapCode = (ushort) pixel;
+            ushort mapCode = (ushort) pixel.MapCode.Value;
             IEcoregion ecoregion = ecoregions.Find(mapCode);
             //Console.WriteLine("  reading in ecoregion {0} which is {1}", ecoregion.Name, ecoregion.Active);
             if (ecoregion != null)
@@ -80,7 +79,7 @@ namespace Landis.Ecoregions
             if (!disposed) {
                 if (disposing) {
                     //  Dispose of managed resources.
-                    raster.Dispose();
+                    raster.Close();
                 }
                 //  Cleanup unmanaged resources (none).
                 disposed = true;
