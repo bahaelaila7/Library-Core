@@ -13,15 +13,15 @@
     <PackageTags>LANDIS-II;Landis;Core</PackageTags>
     <NeutralLanguage>English</NeutralLanguage>
     <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Core-Model</RepositoryUrl>
-    <AssemblyVersion>3.0.1.0</AssemblyVersion>
-    <Version>3.0.1</Version>
-    <FileVersion>3.0.1.0</FileVersion>
+    <AssemblyVersion>3.1</AssemblyVersion>
+    <Version>3.1</Version>
+    <FileVersion>3.1</FileVersion>
   </PropertyGroup>
 
 
   <ItemGroup>
-    <PackageReference Include="Landis.SpatialModeling" Version="2.0.1" />
-    <PackageReference Include="Landis.Utilities" Version="2.0.0" />
+    <PackageReference Include="Landis.SpatialModeling" Version="2.1.0" />
+    <PackageReference Include="Landis.Utilities" Version="2.1.0" />
     <PackageReference Include="log4net" Version="2.0.14" />
     <PackageReference Include="Troschuetz.Random" Version="4.3.0" />
   </ItemGroup>
