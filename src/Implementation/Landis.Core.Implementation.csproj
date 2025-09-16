@@ -18,12 +18,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Landis.Core.csproj" />
+    <ProjectReference Include="..\..\..\Library-Metadata\src\Metadata.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+    <!--<ItemGroup>
     <Reference Include="Landis.Library.Metadata-v2">
       <HintPath>lib\Landis.Library.Metadata-v2.dll</HintPath>
     </Reference>
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>
